@@ -1,24 +1,25 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {CustomSelect} from "./components/CustomSelect";
+import {useQuery} from "@apollo/client";
+import {GET_POSITIONS, GET_RELATIONS} from "./Queries";
+import {Box, CircularProgress} from "@mui/material";
 
 function App() {
+    const { loading: relationsLoading, error: relationsError, data: relationsData = [] } = useQuery(GET_RELATIONS);
+    const { loading: positionsLoading, error: positionsError, data: positionsData = [] } = useQuery(GET_POSITIONS);
+    if (relationsLoading || positionsLoading) {
+        return (
+            <Box sx={{ display: 'flex' }}>
+                <CircularProgress />
+            </Box>
+        )
+    }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <CustomSelect options={relationsData.applicantIndividualCompanyRelations.data}/>
+      <CustomSelect options={positionsData.applicantIndividualCompanyPositions.data} isTextArea={true}/>
     </div>
   );
 }
